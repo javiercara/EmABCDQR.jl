@@ -1,7 +1,24 @@
 # emABCDQR
 
-[![Build Status](https://travis-ci.org/javiercara/emABCDQR.jl.svg?branch=master)](https://travis-ci.org/javiercara/emABCDQR.jl)
+`emABCDQR.jl` is a Julia package to estimate the state space model
 
-[![Coverage Status](https://coveralls.io/repos/javiercara/emABCDQR.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/javiercara/emABCDQR.jl?branch=master)
+$$x_{t+1} = Ax_t + Bu_t + w_t, \quad w_t \rightarrow N(0,Q)$$
+$$y_t = Cx_t + Du_t + v_t, \quad v_t \rightarrow N(0,R)$$
 
-[![codecov.io](http://codecov.io/github/javiercara/emABCDQR.jl/coverage.svg?branch=master)](http://codecov.io/github/javiercara/emABCDQR.jl?branch=master)
+using the Expectation-Maximization algorithm.
+
+## Installation
+
+To install the package, from within Julia do
+
+~~~
+julia> Pkg.add("git@github.com:javiercara/emABCDQR.jl.git")
+~~~
+
+## Author
+
+* **Javier Cara**, ETSI Industriales, Universidad Politecnica de Madrid (Spain)
+
+## Note
+
+* Under development. To be used in a reasearch paper.
