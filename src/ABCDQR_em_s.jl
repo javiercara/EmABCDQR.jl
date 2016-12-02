@@ -1,4 +1,4 @@
-function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,kmax)
+function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 	#
 	# estimate A, B, C, D, Q, R, m1, P1 using the STATIONARY EM algorithm for model
 	# 
@@ -25,11 +25,11 @@ function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,kmax)
 	D = Di
 	Q = Qi
 	R = Ri
-	m1 = m1i
+	m1 = zeros(nx)
 	P1 = zeros(nx,nx)
 
 	# log-likelihood values
-	loglikv = zeros(1,kmax)
+	loglikv = zeros(kmax)
 
 	# Syy, Suu and Syu do not depend on the iterations
 	Syy = zeros(ny,ny)
@@ -50,10 +50,10 @@ function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,kmax)
 		# E-step
 		# ---------------------------------------------------------------------------------
 		# Kalmanfilter
-		(xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik) = ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,m1)
+		(xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik) = ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R)
 		(xtN,PtN,Pt1tN) = ACQR_ksmoother_s(A,xtt,Ptt,xtt1,Ptt1)		
 
-		loglikv[1,k] = loglik
+		loglikv[k] = loglik
 
 		# inutial values
 		Sxx = zeros(nx,nx)
@@ -77,7 +77,7 @@ function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,kmax)
 		# M-step
 		# -------------------------------------------------------------------------------------
 		# Matrices x0e y P0e
-		m1 = reshape(xtN[:,1],nx,1) # xtn[:,1] is a vector
+		m1 = xtN[:,1]
 		P1 = PtN
 
 		# AB
@@ -116,7 +116,9 @@ function ABCDQR_em_s(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,kmax)
 		
 		etime = toq()
 		tcalculo = tcalculo + etime
-		println(string("Iteration ",k,".   Elapsed time = ", etime))
+		if txo
+			println(string("Iteration ",k,".   Elapsed time = ", etime))	
+		end
 
 	end
 

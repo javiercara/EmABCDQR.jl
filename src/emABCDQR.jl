@@ -2,6 +2,8 @@ __precompile__()
 
 module emABCDQR
 
+using emACQR
+
 include("ABCDQR_kfilter.jl")
 include("ABCDQR_kfilter_s.jl")
 include("ABCDQR_em.jl")

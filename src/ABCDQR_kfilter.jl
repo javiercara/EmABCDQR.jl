@@ -1,4 +1,4 @@
-function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x11,P11)
+function ABCDQR_kfilter(y,u,A,B,C,D,Q,R)
 	# 
 	# Kalman filter for model
 	# 
@@ -24,8 +24,9 @@ function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x11,P11)
 	loglik = 0.0
 
 	# Filter 
-	xtt[:,1] = x11
-	Ptt[:,:,1] = P11
+	# x11 = C^{-1}y_1 - C^{-1}Du_1 - C^{-1}v_1
+	xtt[:,1] = C\(y[:,1] - D*u[:,1])  
+	Ptt[:,:,1] = C\R/(C')
 	for t in 2:nt
 		
 		# one-step ahead prediction
