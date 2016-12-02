@@ -1,4 +1,4 @@
-function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R)
+function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x11)
 	# 
 	# STATIONARY Kalman filter for model
 	# 
@@ -34,8 +34,7 @@ function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R)
 	Ptt = (eye(nx)-Kt*C)*Ptt1
 
 	# Filter 
-	# x11 = C^{-1}y_1 - C^{-1}Du_1 - C^{-1}v_1
-	xtt[:,1] = C\(y[:,1] - D*u[:,1])  
+	xtt[:,1] = x11
 	for t in 2:nt
 		
 		# one-step ahead prediction

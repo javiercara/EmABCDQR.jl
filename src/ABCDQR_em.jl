@@ -6,9 +6,9 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 	# y_{t}   = C*x_{t} + D*u_{t} + v_{t}
 	#
 	# cov(w_{t},v_{t}) = [Q 0;0 R]
+	# x1 -> N(m1,P1)
 	#
-	#
-	# javier.cara@upm.es, 2106-02
+	# javier.cara@upm.es, 2016-02
 	#
 
 	# number of states
@@ -25,8 +25,9 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 	D = Di
 	Q = Qi
 	R = Ri
-	m1 = zeros(nx)
-	P1 = zeros(nx,nx)
+	# x11 = C^{-1}y_1 - C^{-1}Du_1 - C^{-1}v_1
+	m1 = C\(y[:,1] - D*u[:,1])
+	P1 = C\R/(C')
 
 	# log-likelihood values
 	loglikv = zeros(kmax)
@@ -50,7 +51,7 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 		# E-step
 		# ---------------------------------------------------------------------------------
 		# Kalmanfilter
-		(xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik) = ABCDQR_kfilter(y,u,A,B,C,D,Q,R)
+		(xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik) = ABCDQR_kfilter(y,u,A,B,C,D,Q,R,m1,P1)
 		(xtN,PtN,Pt1tN) = ACQR_ksmoother(A,xtt,Ptt,xtt1,Ptt1)		
 
 		loglikv[k] = loglik
