@@ -1,4 +1,4 @@
-function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x11)
+function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x10)
 	# 
 	# STATIONARY Kalman filter for model
 	# 
@@ -34,24 +34,21 @@ function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x11)
 	Ptt = (eye(nx)-Kt*C)*Ptt1
 
 	# Filter 
-	xtt[:,1] = x11
-	for t in 2:nt
-		
-		# one-step ahead prediction
-		xtt1[:,t] = A*xtt[:,t-1] + B*u[:,t-1]
-		
+	xtt1[:,1] = x10
+	for t in 1:nt		
 		#  innovations
 		et[:,t] = y[:,t] - C*xtt1[:,t] - D*u[:,t]
 	
 		# filtered values
 		xtt[:,t] = xtt1[:,t] + Kt*et[:,t]
 		
+		# one-step ahead prediction
+		xtt1[:,t+1] = A*xtt[:,t] + B*u[:,t]
+		
 		# likelihood
 		l0 = et[:,t]'*Stinv*et[:,t] # typeof(l0) = Array{Float64,1}
 		loglik = loglik + l0[1]	
 	end
-	# E[x_{N+1}|y_N]
-	xtt1[:,nt+1] = A*xtt[:,nt] + B*u[:,nt]
 
 	loglik = - ny*nt/2*log(2*pi) - nt/2*log(det(St)) - 1/2*loglik
 

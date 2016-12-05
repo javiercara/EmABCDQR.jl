@@ -1,4 +1,4 @@
-function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x11,P11)
+function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x10,P10)
 	# 
 	# Kalman filter for model
 	# 
@@ -24,14 +24,9 @@ function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x11,P11)
 	loglik = 0.0
 
 	# Filter 
-	xtt[:,1] = x11 
-	Ptt[:,:,1] = P11
-	for t in 2:nt
-		
-		# one-step ahead prediction
-		xtt1[:,t] = A*xtt[:,t-1] + B*u[:,t-1]
-		Ptt1[:,:,t] = A*Ptt[:,:,t-1]*A' + Q
-		
+	xtt1[:,1] = x10
+	Ptt1[:,:,1] = P10
+	for t in 1:nt		
 		#  innovations
 		et[:,t] = y[:,t] - C*xtt1[:,t] - D*u[:,t]
 		St[:,:,t] = C*Ptt1[:,:,t]*C' + R # et variance
@@ -43,14 +38,15 @@ function ABCDQR_kfilter(y,u,A,B,C,D,Q,R,x11,P11)
 		# filtered values
 		xtt[:,t] = xtt1[:,t] + Kt[:,:,t]*et[:,t]
 		Ptt[:,:,t] = (eye(nx) - Kt[:,:,t]*C)*Ptt1[:,:,t]
-				
+		
+		# one-step ahead prediction
+		xtt1[:,t+1] = A*xtt[:,t] + B*u[:,t]
+		Ptt1[:,:,t+1] = A*Ptt[:,:,t]*A' + Q
+		
 		# likelihood
 		l0 = et[:,t]'*Stinv*et[:,t] # typeof(l0) = Array{Float64,1}
 		loglik = loglik + log(det(St[:,:,t])) + l0[1]	
 	end
-	# E[x_{N+1}|y_N], Var[x_{N+1}|y_N]
-	xtt1[:,nt+1] = A*xtt[:,nt] + B*u[:,nt]
-	Ptt1[:,:,nt+1] = A*Ptt[:,:,nt]*A' + Q
 	
 	loglik =  - ny*nt/2*log(2*pi) - 0.5*loglik
 
