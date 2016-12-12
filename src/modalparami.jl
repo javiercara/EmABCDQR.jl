@@ -1,4 +1,4 @@
-function modalparami2(A,B,C,dt,dofu)
+function modalparami(A,B,C,dt,dofu)
 	# 
 	# Compute natural frequencies, damping ratios, mode shapes
 	# and modal masses from A, C, D and dt
@@ -7,7 +7,7 @@ function modalparami2(A,B,C,dt,dofu)
 	# 	example : consider we measure at points (a,b,c,d,e) and 
 	# 	the inputs are located at points b,e => dofu = [2,5]
 	#
-	# javier.cara@upm.es, 2016-10 
+	# javier.cara@upm.es, 2016-02 
 	#  
 	
 	# size
@@ -31,7 +31,7 @@ function modalparami2(A,B,C,dt,dofu)
 	# allocating
 	wm1 = zeros(ns)
 	zm1 = zeros(ns)
-	fm1 = zeros(Complex{Float64},no,ns)
+	vm1 = zeros(no,ns)
 	mm1 = zeros(ns)
 
 	s = 1
@@ -41,17 +41,17 @@ function modalparami2(A,B,C,dt,dofu)
 				wm1[ss] = abs(Lambda[s])
 				zm1[ss] = -real(Lambda[s])/wm1[ss]
 				     
-				fm0 = CV[:,s]/Lambda[s]^2
+				vm0 = CV[:,s]/Lambda[s]^2
 				# maximum element = 1    			
-				maxval = fm0[1]
+				maxval = vm0[1]
 				for j in 2:no
-					if abs(fm0[j]) > abs(maxval)
-						maxval = fm0[j]
+					if abs(vm0[j]) > abs(maxval)
+						maxval = vm0[j]
 					end
 				end
-				fm1[:,ss] = fm0/maxval # in theory, it should be a real vector
+				vm1[:,ss] = real(vm0/maxval) # in theory, it should be a real vector
 				
-				c = dt/( im*2*wm1[ss]*sqrt(1-zm1[ss]^2) ) * ( (fm1[dofu,ss]')/(VinvB[s,:]'*maxval) ) # c is a vector with 1 component
+				c = (D[s] - 1.0)/( Lambda[s]*(Lambda[s] - conj(Lambda[s])) ) * (vm1[dofu,ss:ss]')/(VinvB[s:s,:]*maxval) # c is a vector with 1 component
 				mm1[ss] = abs(real( c[1] ) )
 		     
 				# next value
@@ -67,27 +67,27 @@ function modalparami2(A,B,C,dt,dofu)
 	# deleting zero values
 	wm = wm1[1:ss-1]
 	zm = zm1[1:ss-1]    	
-	fm = real( fm1[:,1:ss-1] )
+	vm = vm1[:,1:ss-1]        
 	mm = mm1[1:ss-1] 
 
 	# sorting frequencies			
 	pos = sortperm(wm)
 	wm = wm[pos]
 	zm = zm[pos]	
-	fm = fm[:,pos]
+	vm = vm[:,pos]
 	mm = mm[pos]
 
-	return wm,zm,fm,mm
+	return wm,zm,vm,mm
 	
 end
 
 # ======================================================================
-function modalparami2_test()
+function modalparami_test()
 	#
 	
 	M = [35.0 0.0;0.0 17.5] # mass matrix
 	K = [12250.0 -3500.0;-3500.0 3500.0] # stiffness matrix
-	g = [0.02,0.02] # damping ratios
+	g = [0.02;0.02] # damping ratios
 	
 	# teorethical eigenvalues and eigenvectors
 	W2,V = eig(K,M)
@@ -109,7 +109,7 @@ function modalparami2_test()
 	
 	# computing the modal parameters through the state-space matrices
 	dofu = [1,2]
-	wm,zm,fm,mm = modalparami2(A,B,C,dt,dofu)
+	wm,zm,vm,mm = modalparami(A,B,C,dt,dofu)
 	
 	# eigenvectors with max. component = 1
 	V1 = zeros(2,2)
@@ -124,7 +124,7 @@ function modalparami2_test()
 	Mm1 = V1'*M*V1
 	mm1 = diag(Mm1)
 	
-	return W,g,V1,mm1,wm,zm,fm,mm
+	return W,g,V1,mm1,wm,zm,vm,mm
 	
 end
 
