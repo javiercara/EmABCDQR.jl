@@ -1,4 +1,5 @@
-function ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x10)
+function ABCDQR_kfilter_s(y::Array{Float64,2},u::Array{Float64,2},A::Array{Float64,2},B::Array{Float64,2},C::Array{Float64,2},
+                          D::Array{Float64,2},Q::Array{Float64,2},R::Array{Float64,2},x10::Array{Float64,1})
 	# 
 	# STATIONARY Kalman filter for model
 	# 

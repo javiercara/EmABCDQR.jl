@@ -1,4 +1,5 @@
-function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
+function ABCDQR_em(y::Array{Float64,2},u::Array{Float64,2},Ai::Array{Float64,2},Bi::Array{Float64,2},Ci::Array{Float64,2},Di::Array{Float64,2},
+                   Qi::Array{Float64,2},Ri::Array{Float64,2},m1i::Array{Float64,1},P1i::Array{Float64,2},max_iter::Int,tol::Float64,txo::Bool)
 	#
 	# estimate A, B, C, D, Q, R, m1, P1 using the EM algorithm for model
 	# 
@@ -25,12 +26,11 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 	D = Di
 	Q = Qi
 	R = Ri
-	# x11 = C^{-1}y_1 - C^{-1}Du_1 - C^{-1}v_1
-	m1 = C\(y[:,1] - D*u[:,1])
-	P1 = C\R/(C')
+	m1 = m1i
+	P1 = P1i
 
 	# log-likelihood values
-	loglikv = zeros(kmax)
+	loglikv = zeros(max_iter)
 
 	# Syy, Suu and Syu do not depend on the iterations
 	Syy = zeros(ny,ny)
@@ -42,10 +42,9 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 		Syu = Syu + y[:,t]*u[:,t]'
 	end
 
-	# total time
-	tcalculo=0.0
-
-	for k in 1:kmax
+	tol1 = 1.0
+	iter = 1
+	while (iter <= max_iter) && (tol1 > tol)
 		tic()
 
 		# E-step
@@ -54,7 +53,10 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 		(xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik) = ABCDQR_kfilter(y,u,A,B,C,D,Q,R,m1,P1)
 		(xtN,PtN,Pt1tN) = ACQR_ksmoother(A,xtt,Ptt,xtt1,Ptt1)		
 
-		loglikv[k] = loglik
+		loglikv[iter] = loglik
+		if iter > 1
+			tol1 = abs( (loglikv[iter] - loglikv[iter-1])/loglikv[iter-1] )
+		end	
 
 		# initial values
 		Sxx = zeros(nx,nx)
@@ -114,15 +116,23 @@ function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,kmax,txo=false)
 		R = (R + R')/2 # to make sure it's a symmetric matrix
 		
 		etime = toq()
-		tcalculo = tcalculo + etime
 		if txo
-			println(string("Iteration ",k,".   Elapsed time = ", etime))	
+			println( "Iter " * @sprintf("%3d",iter) * ",   @time = " * @sprintf("%5.2f",etime) * ",   logLik = " * @sprintf("%.6E",loglik) * 
+			         ",   tol = ", @sprintf("%.2E",tol1) )
 		end
+		
+		iter += 1
 
 	end
 
+	loglikv = loglikv[1:(iter-1)]	
+	
+	# Akaike Information Criterion
+	P = ny*nx + nx*nx + nx*(nx+1)/2 + ny*(ny+1)/2
+	aic = -2*loglikv[end] + 2*P
+
 	# output
-	return A,B,C,D,Q,R,m1,P1,loglikv
+	return A,B,C,D,Q,R,m1,P1,loglikv,aic
 
 end
 

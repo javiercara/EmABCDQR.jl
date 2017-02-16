@@ -1,5 +1,7 @@
+# type in Julia: Pkg.test("emABCDQR")
+
 using emABCDQR
 using Base.Test
 
-# write your own tests here
-@test 1 == 2
+include("ABCDQR_kfilter_test.jl")
+include("ABCDQR_find_test.jl")
