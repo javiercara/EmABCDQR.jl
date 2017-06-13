@@ -1,5 +1,4 @@
-function ABCDQR_em(y::Array{Float64,2},u::Array{Float64,2},Ai::Array{Float64,2},Bi::Array{Float64,2},Ci::Array{Float64,2},Di::Array{Float64,2},
-                   Qi::Array{Float64,2},Ri::Array{Float64,2},m1i::Array{Float64,1},P1i::Array{Float64,2},max_iter::Int,tol::Float64,txo::Bool)
+function ABCDQR_em(y,u,Ai,Bi,Ci,Di,Qi,Ri,m1i,P1i,max_iter::Int,tol::Float64,txo::Bool)
 	#
 	# estimate A, B, C, D, Q, R, m1, P1 using the EM algorithm for model
 	# 

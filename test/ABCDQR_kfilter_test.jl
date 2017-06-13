@@ -1,4 +1,7 @@
-m = ABCDQR_sim(1000,2,2)
+nt = 1000
+no = 2
+ni = 2
+m = emACQR.simula(nt,no,ni)
 
 y = m["y"]
 u = m["u"]
