@@ -1,7 +1,5 @@
 nt = 1000
-no = 2
-ni = 2
-m = emACQR.simula(nt,no,ni)
+m = ABCDQR_simula(nt)
 
 y = m["y"]
 u = m["u"]
@@ -14,4 +12,3 @@ mest1 = ABCDQR_em_s1(y,u,nx,max_iter=10,txo=false)
 @test sum(mest.A.^2) > 1e-6
 @test sum(mest1.A.^2) > 1e-6
 println("OK")
-

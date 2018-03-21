@@ -1,6 +1,6 @@
 __precompile__()
 
-module emABCDQR
+module EmABCDQR
 
 type ABCDQR
 	A
@@ -15,8 +15,9 @@ type ABCDQR
 	aic::Float64
 end
 
-using emACQR
+using EmACQR
 
+include("ABCDQR_simula.jl")
 include("ABCDQR_kfilter.jl")
 include("ABCDQR_kfilter_s.jl")
 include("ABCDQR_em.jl")
@@ -24,7 +25,8 @@ include("ABCDQR_em_s.jl")
 include("ABCDQR_em1.jl")
 include("ABCDQR_em_s1.jl")
 
-export 
+export
+	ABCDQR_simula,
 	ABCDQR_kfilter, ABCDQR_kfilter_s,
 	ABCDQR_em, ABCDQR_em_s,
 	ABCDQR, ABCDQR_em1, ABCDQR_em_s1

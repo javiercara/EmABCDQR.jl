@@ -1,11 +1,12 @@
 # emABCDQR
 
-`emABCDQR.jl` is a Julia package to estimate the state space model
+`EmABCDQR.jl` is a Julia package to estimate the state space model
 
-$ x_{t+1} = Ax_{t} + Bu_{t} + w_{t} $
-$ y_{t} = Cx_{t} + Du_{t}  + v_{t} $
+x_{t+1} = Ax_{t} + Bu_{t} + w_{t}
 
-where $w_{t} -> N(0,Q)$, $v_{t} -> N(0,R)$
+y_{t} = Cx_{t} + Du_{t}  + v_{t}
+
+where w_{t} -> N(0,Q), v_{t} -> N(0,R)
 
 using the Expectation-Maximization algorithm.
 
@@ -14,7 +15,7 @@ using the Expectation-Maximization algorithm.
 To install the package, from within Julia do
 
 ~~~
-julia> Pkg.clone("git@github.com:javiercara/emABCDQR.jl.git")
+julia> Pkg.clone("git@github.com:javiercara/EmABCDQR.jl.git")
 ~~~
 
 ## Author

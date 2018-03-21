@@ -1,7 +1,5 @@
 nt = 1000
-no = 2
-ni = 2
-m = emACQR.simula(nt,no,ni)
+m = ABCDQR_simula(nt)
 
 y = m["y"]
 u = m["u"]
@@ -25,4 +23,3 @@ print("Testing ABCDQR_kfilter_s: ")
 xtt,Ptt,xtt1,Ptt1,et,St,Kt,loglik = ABCDQR_kfilter_s(y,u,A,B,C,D,Q,R,x10)
 @test sum(xtt.^2) > 1e-6
 println("OK")
-
