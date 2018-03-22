@@ -25,6 +25,10 @@ matrix:
 #before_script: # homebrew for mac
 #  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
 
+# jcara
+before_script:
+  - julia -e 'Pkg.clone("git@github.com:javiercara/EmACQR.jl.git")'
+
 ## uncomment the following lines to override the default test script
 #script:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("EmABCDQR"); Pkg.test("EmABCDQR"; coverage=true)'
