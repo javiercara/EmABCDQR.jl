@@ -1,4 +1,6 @@
-# emABCDQR
+# emABCDQR.jl
+
+[![Travis](https://travis-ci.org/javiercara/EmABCDQR.jl.svg?branch=master)](https://travis-ci.org/javiercara/EmABCDQR.jl.svg?branch=master)
 
 `EmABCDQR.jl` is a Julia package to estimate the state space model
 
